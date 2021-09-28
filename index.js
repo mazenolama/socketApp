@@ -18,24 +18,27 @@ var courses = [
     {id:2,name:'DS'},
     {id:3,name:'CS'},
 ];
-/***********  GET ALL   ********/
+/**********************  GET ALL   *******************/
 app.get('/api/courses', (req, res) => {
     res.send(courses);
 });
-/***********  GET ALL   ********/
+/**********************  GET ALL      *******************/
 
-/***********  GET SINGLE   ********/
+/**********************  GET SINGLE   **********************/
 app.get('/api/courses/:id', (req, res) => {
    let course = courses.find( c => c.id === parseInt(req.params.id));
-   if(!course)
-        res.status(404).send('course with the given id not found');
-   else
+    if(!course) 
+        return res.status(404).send('course with the given id not found');
+    else
         res.send(course);
 });
-/***********  GET SINGLE   ********/
+/**********************  GET SINGLE   **********************/
 
-/***********  POST   ********/
+/**********************    POST    **************************/
 app.post('/api/courses',(req,res) => {
+    const {error} = inputValidate(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
+
     let course = {
         id : courses.length +1,
         name : req.body.name,
@@ -43,13 +46,14 @@ app.post('/api/courses',(req,res) => {
     courses.push(course);
     res.send(courses);
 });
-/***********  POST   ********/
+/**********************    POST    **********************/
 
-/***********  DELETE   ********/
+/**********************  DELETE   ***********************/
 app.delete('/api/courses/:id', (req,res) => {
+    
     let course = courses.find( c => c.id === parseInt(req.params.id));
-    if(!course)
-        res.status(404).send('course with the given id not found');
+    if(!course) 
+        return res.status(404).send('course with the given id not found');
     else
     {
         const index = courses.indexOf(course);
@@ -57,39 +61,34 @@ app.delete('/api/courses/:id', (req,res) => {
         res.send(courses);
     }
 });
-/***********  DELETE   ********/
+/**********************  DELETE   **********************/
 
-/***********  UPDATE   ********/
+/**********************  UPDATE   **********************/
 app.put('/api/courses/:id', (req,res) => {
-    if (!req.body.name || req.body.name === '')
-    {
-        res.status(400).send(' Not vaild body data request');
-        return;
-    }
-    if (!req.params.id || req.params.id === '')
-    {
-        res.status(400).send(' Not vaild params data request');
-        return;
-    }
-    const scheme = {
-        id : Joi.required(),
-        name : Joi.string().min(1).required()
-    }
-    Joi.validate(req.body, scheme);
     
+    const {error} = inputValidate(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
+
     const course = courses.find( c => c.id === parseInt(req.params.id));
-    if(!course) res.status(404).send('course with the given id not found');
+    if(!course) 
+        return res.status(404).send('course with the given id not found');
     else{
         course.name = req.body.name;
         res.send(course);
     }
 });
-/***********  UPDATE   ********/
+/************************   UPDATE     *****************************/
 
-/***********  inputValidate   ********/
-function inputValidate(data){
-    
+
+/**********************  inputValidate  ************************/
+function inputValidate(body){
+    const scheme = {name : Joi.string().min(2).required()}
+    return Joi.validate(body, scheme);
 }
-/***********  inputValidate   ********/
+/**********************  inputValidate  ************************/
+
+
+/**********************  start server   ************************/
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Listening to port ${port}...`));
+/**********************  start server   **************************/
