@@ -4,15 +4,6 @@ const express = require('express');
 const app = express();
 app.use(express.json());
 
-//app.get(); .post(); .put(); .delete();
-
-app.get('/api/courses/:id/:name' ,(req,res) => {
-    //var id =req.params.id; var name =req.params.name;
-    //res.send(`id : ${id} \n name : ${name}`);
-    //res.send(req.params);
-    res.send(req.query);
-});
-
 var courses = [
     {id:1,name:'OOP'},
     {id:2,name:'DS'},
