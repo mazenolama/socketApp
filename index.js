@@ -2,8 +2,14 @@ const Joi = require('joi');
 const express = require('express');
 
 const app = express();
-app.use(express.json());
-
+/**********************  Middleware   **********************/
+app.use(express.json()); // check if there is a json 
+// custom middlware
+app.use((req,res,next) => {
+    console.log("Logging....");
+    next();
+});
+/**********************  Middleware   **********************/
 var courses = [
     {id:1,name:'OOP'},
     {id:2,name:'DS'},
